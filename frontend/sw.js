@@ -1,9 +1,9 @@
 // SkillMitra PWA Service Worker for Offline Resilience
-const CACHE_NAME = 'skillmitra-v3';
+const CACHE_NAME = 'skillmitra-v4';
 const STATIC_ASSETS = [
   '/app',
-  '/ui/styles.css?v=45',
-  '/ui/app.js?v=45',
+  '/ui/styles.css?v=46',
+  '/ui/app.js?v=46',
   '/ui/manifest.json',
   '/ui/icon-192.png',
   '/ui/icon-512.png'
