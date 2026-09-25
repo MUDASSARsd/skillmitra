@@ -1,0 +1,30 @@
+{
+  "status": "SUCCESS",
+  "nqr_metrics": {
+    "total_qualification_records": 2814,
+    "unique_qualification_codes": 2812,
+    "duplicate_code_values": [
+      "QG-04-ES-00913-2023-V1-SCGJ"
+    ],
+    "duplicate_code_records_count": 2,
+    "null_code_records_count": 1
+  },
+  "eligibility_metrics": {
+    "total_eligibility_routes_imported": 11,
+    "qualifications_with_eligibility_data": 2,
+    "qualifications_without_eligibility_data": 2812,
+    "eligibility_coverage_percentage": 0.07
+  },
+  "overall_summary": {
+    "total_qualification_records": 2814,
+    "unique_qualification_codes": 2812,
+    "duplicate_codes_list": [
+      "QG-04-ES-00913-2023-V1-SCGJ"
+    ],
+    "null_code_records_count": 1,
+    "eligibility_route_count": 11,
+    "qualifications_with_eligibility_data": 2,
+    "qualifications_without_eligibility_data": 2812,
+    "eligibility_coverage_percentage": 0.07
+  }
+}

@@ -1,0 +1,2 @@
+centre_id,centre_name,training_partner,state,district,address,pincode,latitude,longitude,qualification_code,job_role,sector,scheme,batch_id,delivery_mode,batch_start_date,batch_end_date,batch_timing,availability_status,source,source_url,verification_status,last_verified_at
+,EXAMPLE ONLY - replace with official data,,Telangana,Hyderabad,,,,,EXAMPLE/CODE,Example Job Role,Example Sector,PMKVY 4.0,,Offline,,,,UNKNOWN,template,,UNVERIFIED,

@@ -1,0 +1,14 @@
+{
+  "unique_local_qualification_codes": 2812,
+  "legacy_year_slash_codes": 330,
+  "codes_recognized_by_v15_3_extractor": 2810,
+  "recognized_percentage": 99.93,
+  "remaining_nonstandard_values": [
+    "2024",
+    "NAO"
+  ],
+  "existing_official_mappings_preserved": 331,
+  "existing_eligibility_routes_preserved": 1206,
+  "existing_eligibility_coverage_percentage": 11.7,
+  "next_action": "Run RECONCILE_ELIGIBILITY_V15_3.bat. It revisits only unmapped NQR IDs using the expanded exact-code parser, then imports verified routes."
+}

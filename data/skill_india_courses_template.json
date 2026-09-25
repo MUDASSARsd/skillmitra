@@ -1,0 +1,29 @@
+{
+  "IsSuccess": true,
+  "Data": {
+    "Pagination": {"CurrentPageNumber": 1, "CurrentPageSize": 1, "TotalCount": 1},
+    "Courses": [
+      {
+        "Id": "example-course-id",
+        "Code": "course-v1:example",
+        "Title": "Example Skill Course",
+        "CourseInformation": {"NsqfLevel": 4, "QpCode": [{"QpCode": "EXAMPLE/Q0001"}], "NosCode": []},
+        "CreatedBy": "Official Provider",
+        "Programs": [{"Program": "Example Program"}],
+        "Language": "English",
+        "Price": 0,
+        "CourseMode": 1,
+        "Availability": 1,
+        "Occupations": [{"Occupation": "Example Occupation"}],
+        "Domains": [{"Domain": "Example Domain"}],
+        "ShortDescription": "Example course description.",
+        "CourseStatistic": {"EnrollmentCount": 0, "RatingAverage": null},
+        "CourseCriteria": [
+          {"Name": "age_requirement", "Value": "Above 18"},
+          {"Name": "educational_qualification", "Value": "10th Pass"},
+          {"Name": "industry_experience", "Value": "0"}
+        ]
+      }
+    ]
+  }
+}

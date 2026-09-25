@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>SkillMitra — PM-AJAY Livelihood Assistant</title>
+  <meta name="theme-color" content="#2563eb" />
+  <link rel="manifest" href="/ui/manifest.json" />
+  <link rel="apple-touch-icon" href="/ui/icon-192.png" />
+  <link rel="stylesheet" href="/ui/styles.css?v=44" />
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="brand"><div class="logo">SM</div><div><h1>SkillMitra <span class="pmajay-badge">PM-AJAY GIA Component</span></h1><p>MoSJE Problem Statement 97 — Livelihood & NSQF Alignment</p></div></div>
+      <div class="top-actions">
+        <label class="lang"><span>Language</span><select id="language"><option value="en">English</option><option value="hi">हिन्दी</option><option value="te">తెలుగు</option><option value="ta">தமிழ்</option><option value="kn">ಕನ್ನಡ</option><option value="ml">മലയാളം</option><option value="mr">मराठी</option><option value="bn">বাংলা</option><option value="gu">ગુજરાતી</option><option value="pa">ਪੰਜਾਬੀ</option><option value="or">ଓଡ଼ିଆ</option><option value="hinglish">Hinglish</option></select></label>
+        <label class="lang"><span>Mode</span><select id="mode"><option value="online">Online AI</option><option value="offline">Offline local</option></select></label>
+        <label class="voice-toggle" title="Read assistant replies aloud"><input id="speakToggle" type="checkbox" checked /> <span>🔊 Speak</span></label>
+        <button id="installAppBtn" class="install-app-btn hidden" title="Install as Mobile/Desktop App">📲 Install App</button>
+        <div id="statusPill" class="status checking"><span class="dot"></span><span id="statusText">Checking</span></div>
+      </div>
+    </header>
+
+    <section class="demo-strip" id="demoStrip">
+      <div><span class="eyebrow">SYSTEM READY</span><strong id="demoHeadline">Offline-first livelihood intelligence</strong></div>
+      <div class="demo-metrics">
+        <span><b id="metricNqr">—</b> NQR</span>
+        <span><b id="metricEligibility">—</b> eligibility routes</span>
+        <span><b id="metricJobs">—</b> cached jobs</span>
+        <span><b id="metricCourses">—</b> Skill India courses</span>
+        <span><b id="metricCentres">—</b> verified centres</span>
+      </div>
+    </section>
+
+    <main class="layout">
+      <section class="chat-card">
+        <div class="section-head"><div><span class="eyebrow">ASSISTANT</span><h2>Tell me about yourself</h2></div><button id="resetBtn" class="ghost">New conversation</button></div>
+        <div id="chat" class="chat" aria-live="polite">
+          <div class="message assistant"><div class="avatar">SM</div><div class="bubble"><strong>Namaste 👋</strong><br>Tell me about your education, skills, work experience, and the kind of work you are interested in. You can answer naturally.</div></div>
+        </div>
+        <div id="notice" class="notice hidden"></div>
+        <div class="demo-presets">
+          <span>⚡ Quick Jury Demos:</span>
+          <button type="button" class="preset-btn" data-preset="10th Electrician">⚡ 10th Electrician</button>
+          <button type="button" class="preset-btn" data-preset="Construction Mason">🧱 Construction Mason</button>
+          <button type="button" class="preset-btn" data-preset="Solar Technician">☀️ Solar Technician</button>
+          <button type="button" class="preset-btn" data-preset="Dairy Farming">🥛 Dairy Farming</button>
+        </div>
+        <form id="chatForm" class="composer">
+          <textarea id="messageInput" rows="2" placeholder="Example: I passed 10th and worked in electrical wiring for 2 years…" required></textarea>
+          <button id="micBtn" class="mic-btn" type="button" aria-label="Start voice input" title="Speak your answer">🎙️</button>
+          <button id="sendBtn" type="submit">Send <span>→</span></button>
+        </form>
+        <div class="composer-note"><span id="voiceStatus">Voice ready.</span> <span id="voiceModeText">Voice input uses your browser speech-recognition service when available.</span> Recommendations come from the local NQR engine.</div>
+      </section>
+
+      <aside class="profile-card">
+        <div class="section-head"><div><span class="eyebrow">LIVE PROFILE</span><h2>Beneficiary details</h2></div><span id="readiness" class="badge muted">Collecting</span></div>
+        <div id="profileGrid" class="profile-grid"></div>
+        <div class="missing"><h3>Still useful to know</h3><div id="missingTags" class="tags"><span class="tag">Education</span><span class="tag">Skill / interest</span></div></div>
+        <button id="offlineDemoBtn" class="secondary">Try structured offline recommendation</button>
+      </aside>
+    </main>
+
+    <section class="results-card">
+      <div id="evidenceSummary" class="evidence-summary hidden"></div>
+      <div class="section-head"><div><span class="eyebrow">NQR MATCHES</span><h2>Recommended pathways</h2></div><span id="resultCount" class="badge muted">0 results</span></div>
+      <div id="results" class="results-empty"><div class="empty-icon">⌁</div><h3>No recommendations yet</h3><p>Once we know your education and at least one skill, interest, or occupation, matching NQR qualifications will appear here.</p></div>
+    </section>
+
+    <dialog id="offlineDialog">
+      <form method="dialog" class="dialog-card" id="offlineForm">
+        <div class="section-head"><div><span class="eyebrow">OFFLINE MODE</span><h2>Structured profile demo</h2></div><button value="cancel" class="icon-btn" aria-label="Close">×</button></div>
+        <p class="dialog-copy">This calls <code>/recommend</code> only. It does not need Gemini or another cloud model.</p>
+        <div class="form-grid">
+          <label>Education <input id="offEducation" value="10th" /></label>
+          <label>Education status <input id="offStatus" value="passed" /></label>
+          <label>Skills <input id="offSkills" value="house wiring, switch repair" /></label>
+          <label>Interests <input id="offInterests" value="electrical" /></label>
+          <label>Experience domain <input id="offExpDomain" value="electrical wiring" /></label>
+          <label>Experience months <input id="offExpMonths" type="number" min="0" value="24" /></label>
+          <label>Employment preference <select id="offEmployment"><option value="job">Job</option><option value="self_employment">Self employment</option><option value="business">Business</option></select></label>
+          <label>District <input id="offDistrict" value="Hyderabad" /></label>
+        </div>
+        <div class="dialog-actions"><button value="cancel" class="ghost">Cancel</button><button id="runOfflineBtn" value="default" type="submit">Run local mapping →</button></div>
+      </form>
+    </dialog>
+  </div>
+  <script src="/ui/app.js?v=44"></script>
+</body>
+</html>

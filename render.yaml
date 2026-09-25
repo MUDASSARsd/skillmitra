@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: jeevikamitra
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn backend.api.app:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health
+    envVars:
+      - key: SKILLMITRA_RUNTIME
+        value: cloud
+      - key: CORS_ORIGINS
+        value: "*"
+      - key: SKILLMITRA_ONLINE_MODEL
+        value: gemini-3.5-flash-lite
+      - key: GEMINI_API_KEY
+        sync: false

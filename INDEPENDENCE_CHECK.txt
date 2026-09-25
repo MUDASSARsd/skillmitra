@@ -1,0 +1,12 @@
+JeevikaMitra V39 Independence Check
+
+- No runtime dependency on V33/V34/V35/V36/V37 folders.
+- Core NQR database is inside data/nqr_database.db.
+- Semantic cache is inside data/nqr_semantic_embeddings.npz.
+- Frontend and backend use paths relative to the current project.
+- Offline multilingual ASR installs into models/faster-whisper-tiny in this project.
+- Stale external model paths are ignored by default (ALLOW_EXTERNAL_MODEL_PATHS=0).
+- Cloud runtime skips local speech-model warmup.
+- Render blueprint included: render.yaml.
+- Private .env is excluded from the Deploy Ready ZIP.
+- Local regression suite: 250 tests passed (live external-provider tests excluded).

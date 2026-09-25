@@ -1,0 +1,80 @@
+{
+  "source_checked_on": "2026-09-24",
+  "schemes": [
+    {
+      "scheme_code": "PM-AJAY-GIA",
+      "scheme_name": "PM-AJAY Grants-in-Aid livelihood component",
+      "ministry": "Department of Social Justice & Empowerment, Ministry of Social Justice & Empowerment",
+      "scheme_type": "SC livelihood / district-state project",
+      "target_groups": ["Scheduled Caste communities"],
+      "benefits": "District/State-level projects for socio-economic betterment of SCs, including comprehensive livelihood projects, skill development, related infrastructure and eligible livelihood-generation support.",
+      "application_method": "Implemented through approved State/UT/District projects; beneficiary access depends on the local approved project and implementing agency.",
+      "official_url": "https://pmajay.dosje.gov.in",
+      "source_title": "Pradhan Mantri Anusuchit Jaati Abhyuday Yojna (PM-AJAY)",
+      "source_url": "https://socialjustice.gov.in/schemes/104",
+      "source_checked_on": "2026-09-24",
+      "eligibility": {"community": ["SC"], "direct_individual_application": false},
+      "notes": "Treat as program/project relevance, not as a direct individual entitlement."
+    },
+    {
+      "scheme_code": "PM-DAKSH",
+      "scheme_name": "Pradhan Mantri Dakshta Aur Kushalta Sampann Hitgrahi (PM-DAKSH)",
+      "ministry": "Department of Social Justice & Empowerment, Ministry of Social Justice & Empowerment",
+      "scheme_type": "skill training",
+      "target_groups": ["SC", "OBC", "EWS", "DNT", "Safai Mitras including waste pickers"],
+      "benefits": "Skill training through short-term courses and other eligible training categories with a focus on wage/self-employment.",
+      "application_method": "Register through Skill India Digital Hub (SIDH) and complete the applicable identity/category checks.",
+      "official_url": "https://pmdaksh.dosje.gov.in/",
+      "source_title": "PM-DAKSH official scheme information",
+      "source_url": "https://socialjustice.gov.in/schemes/100/archive",
+      "source_checked_on": "2026-09-24",
+      "eligibility": {"age_min": 18, "age_max": 45, "sc_income_limit": null, "sidh_registration": true},
+      "notes": "SC applicants require a valid caste certificate; current official information states no income limit for SC applicants."
+    },
+    {
+      "scheme_code": "DDU-GKY",
+      "scheme_name": "Deen Dayal Upadhyaya Grameen Kaushalya Yojana (DDU-GKY)",
+      "ministry": "Ministry of Rural Development",
+      "scheme_type": "rural youth skill and placement",
+      "target_groups": ["Rural youth from poor families"],
+      "benefits": "Market-linked skill development and placement-oriented support for eligible rural youth.",
+      "application_method": "Access through DDU-GKY / State Rural Livelihood Mission implementation and approved training partners.",
+      "official_url": "https://kaushalbharat.gov.in/",
+      "source_title": "Kaushal Bharat - About DDU-GKY",
+      "source_url": "https://kaushalbharat.gov.in/",
+      "source_checked_on": "2026-09-24",
+      "eligibility": {"age_min": 15, "age_max": 35, "rural_poor_family": true},
+      "notes": "Scheme focus is rural youth aged 15-35 from poor families; exact household eligibility must be verified through the implementation channel."
+    },
+    {
+      "scheme_code": "PM-VISHWAKARMA",
+      "scheme_name": "PM Vishwakarma",
+      "ministry": "Ministry of Micro, Small & Medium Enterprises",
+      "scheme_type": "traditional artisan livelihood",
+      "target_groups": ["Artisans and craftspeople in 18 notified traditional trades"],
+      "benefits": "Recognition, skill upgradation, toolkit incentive, concessional collateral-free credit and marketing/digital support, subject to scheme conditions.",
+      "application_method": "Enrollment through the official PM Vishwakarma process / nearest Common Service Centre (CSC).",
+      "official_url": "https://pmvishwakarma.gov.in/",
+      "source_title": "MSME Scheme Booklet - PM Vishwakarma",
+      "source_url": "https://my.msme.gov.in/files/assets/pdf/v2.0%20-2025-%20Scheme%20booklet%20Eng-14.02.2025.pdf",
+      "source_checked_on": "2026-09-24",
+      "eligibility": {"age_min": 18, "traditional_trades": 18},
+      "notes": "Trade/family/registration conditions must be verified during official enrollment."
+    },
+    {
+      "scheme_code": "PMEGP",
+      "scheme_name": "Prime Minister Employment Generation Programme (PMEGP)",
+      "ministry": "Ministry of Micro, Small & Medium Enterprises / KVIC",
+      "scheme_type": "new self-employment enterprise",
+      "target_groups": ["Individuals 18+ starting eligible new micro-enterprises", "special-category beneficiaries including SC/ST/women"],
+      "benefits": "Credit-linked margin-money subsidy for eligible new enterprises; subsidy rates vary by category and rural/urban location.",
+      "application_method": "Apply through the official PMEGP e-portal subject to project, education and prior-subsidy conditions.",
+      "official_url": "https://www.kviconline.gov.in/pmegpeportal/",
+      "source_title": "PMEGP official eligibility / scheme information",
+      "source_url": "https://www.common-pmegp.msme.gov.in/Home/MSME_List",
+      "source_checked_on": "2026-09-24",
+      "eligibility": {"age_min": 18, "income_ceiling": null, "new_project_only": true},
+      "notes": "Education requirement depends on project cost; existing/subsidized units may be excluded under scheme rules."
+    }
+  ]
+}

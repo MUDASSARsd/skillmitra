@@ -1,0 +1,30 @@
+{
+  "IsSuccess": true,
+  "StatusCode": 200,
+  "Message": "",
+  "Data": {
+    "Jobs": {
+      "Data": [
+        {
+          "JobId": "EXAMPLE-1",
+          "JobTitle": "Solar PV Installer",
+          "CompanyName": "Example Employer",
+          "JobDescription": "Example only - replace this file with a real saved API response.",
+          "VacancyCount": "1",
+          "MinEduQual": "ITI",
+          "MinExperience": 0,
+          "MaxExperience": 1,
+          "MinCtcMonthly": 15000,
+          "MaxCtcMonthly": 20000,
+          "JobLocation": {"District": "Hyderabad", "State": "Telangana", "Country": "India"},
+          "SearchTags": [["Solar PV", "Wiring"]],
+          "SourceSystem": "NCS",
+          "IsActive": true,
+          "PostedOn": "2026-09-24T00:00:00Z",
+          "ValidUpto": "2026-12-24T00:00:00Z",
+          "ApplyUrl": "https://example.invalid/job"
+        }
+      ]
+    }
+  }
+}
