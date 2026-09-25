@@ -354,7 +354,7 @@ class LocalTTS:
             if self.espeak_data_parent:
                 cmd.append(f"--path={self.espeak_data_parent}")
                 env["ESPEAK_DATA_PATH"] = str(self.espeak_data_parent)
-            cmd.extend(["-b", "1", "-v", voice, "-s", speed, "-g", "4", "-p", "50", "-a", "100", "-w", str(out)])
+            cmd.extend(["-b", "1", "-v", voice, "-s", speed, "-p", "50", "-a", "100", "-w", str(out)])
             result = subprocess.run(
                 cmd,
                 input=clean_text.encode("utf-8"),

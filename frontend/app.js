@@ -274,7 +274,15 @@ function stopAllAudio(){
   try{ window.speechSynthesis?.cancel(); }catch(_){}
 }
 
+let bgAudio = null;
 async function unlockAudioOutput(){
+  try{
+    if(!bgAudio){
+      bgAudio = new Audio();
+      bgAudio.src = 'data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA';
+    }
+    bgAudio.play().catch(()=>{});
+  }catch(_){}
   try{
     if(!ttsAudioContext){
       const Ctx = window.AudioContext || window.webkitAudioContext;
@@ -375,6 +383,7 @@ async function speak(text){
   const voice = findVoiceFor(lang);
 
   stopAllAudio();
+  await unlockAudioOutput();
 
   if($('mode')?.value==='offline'){
     if($('voiceStatus')) $('voiceStatus').textContent = `Speaking ${label}…`;
@@ -388,44 +397,44 @@ async function speak(text){
     }
     // Fully offline path: local WAV backend (Piper / eSpeak NG)
     try{
-        await playAudioResponse('/tts/offline',{text,language:code});
-        if($('voiceStatus')) $('voiceStatus').textContent = `Speaking ${label} offline.`;
-        return;
-      }catch(browserErr){
-        stopAllAudio();
-        try{
-          const direct = await fetch('/tts/offline/play-local', {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({text: cleanedText, language: code})
-          });
-          if(direct.ok){
-            if($('voiceStatus')) $('voiceStatus').textContent = `Speaking ${label} offline (Windows speaker).`;
-            return;
-          }
-          const detail = await direct.json().catch(() => ({}));
-          throw new Error(detail.detail || browserErr.message || 'Local speaker playback failed');
-        }catch(directErr){
-          stopAllAudio();
-          if('speechSynthesis' in window && voice){
-            try{
-              window.speechSynthesis.cancel();
-              const utterance = new SpeechSynthesisUtterance(cleanedText);
-              window._activeUtterance = utterance;
-              utterance.onend = () => { window._activeUtterance = null; };
-              utterance.lang = lang;
-              utterance.voice = voice;
-              utterance.rate = 0.95;
-              window.speechSynthesis.speak(utterance);
-              if($('voiceStatus')) $('voiceStatus').textContent = `Speaking ${label} with system fallback.`;
-              return;
-            }catch(_){}
-          }
-          if($('voiceStatus')) $('voiceStatus').textContent = `Offline ${label} speech failed: ${directErr.message}`;
+      await playAudioResponse('/tts/offline',{text,language:code});
+      if($('voiceStatus')) $('voiceStatus').textContent = `Speaking ${label} offline.`;
+      return;
+    }catch(browserErr){
+      stopAllAudio();
+      try{
+        const direct = await fetch('/tts/offline/play-local', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({text: cleanedText, language: code})
+        });
+        if(direct.ok){
+          if($('voiceStatus')) $('voiceStatus').textContent = `Speaking ${label} offline (Windows speaker).`;
           return;
         }
+        const detail = await direct.json().catch(() => ({}));
+        throw new Error(detail.detail || browserErr.message || 'Local speaker playback failed');
+      }catch(directErr){
+        stopAllAudio();
+        if('speechSynthesis' in window && voice){
+          try{
+            window.speechSynthesis.cancel();
+            const utterance = new SpeechSynthesisUtterance(cleanedText);
+            window._activeUtterance = utterance;
+            utterance.onend = () => { window._activeUtterance = null; };
+            utterance.lang = lang;
+            utterance.voice = voice;
+            utterance.rate = 0.95;
+            window.speechSynthesis.speak(utterance);
+            if($('voiceStatus')) $('voiceStatus').textContent = `Speaking ${label} with system fallback.`;
+            return;
+          }catch(_){}
+        }
+        if($('voiceStatus')) $('voiceStatus').textContent = `Offline ${label} speech failed: ${directErr.message}`;
+        return;
       }
     }
+  }
 
   // In Online mode, prioritize clear Edge Neural TTS first for crystal-clear, smooth natural voice.
   try{
