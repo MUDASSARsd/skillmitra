@@ -24,6 +24,14 @@ _ROOT = Path(__file__).resolve().parents[1]
 
 # High-quality optional Piper voices already used by the project.
 _PIPER_VOICES = {
+    "en": {
+        "name": "en_US-lessac-medium.onnx",
+        "folder": "piper-en",
+        "model_env": "PIPER_ENGLISH_MODEL",
+        "config_env": "PIPER_ENGLISH_CONFIG",
+        "dir_env": "PIPER_ENGLISH_DIR",
+        "label": "English",
+    },
     "te": {
         "name": "te_IN-padmavathi-medium.onnx",
         "folder": "piper-te",
