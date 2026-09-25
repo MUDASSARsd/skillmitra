@@ -7,7 +7,7 @@
   <meta name="theme-color" content="#2563eb" />
   <link rel="manifest" href="/ui/manifest.json" />
   <link rel="apple-touch-icon" href="/ui/icon-192.png" />
-  <link rel="stylesheet" href="/ui/styles.css?v=46" />
+  <link rel="stylesheet" href="/ui/styles.css?v=47" />
 </head>
 <body>
   <div class="app-shell">
@@ -15,7 +15,7 @@
       <div class="brand"><div class="logo">SM</div><div><h1>SkillMitra <span class="pmajay-badge">PM-AJAY GIA Component</span></h1><p>MoSJE Problem Statement 97 — Livelihood & NSQF Alignment</p></div></div>
       <div class="top-actions">
         <label class="lang"><span>Language</span><select id="language"><option value="en">English</option><option value="hi">हिन्दी</option><option value="te">తెలుగు</option><option value="ta">தமிழ்</option><option value="kn">ಕನ್ನಡ</option><option value="ml">മലയാളം</option><option value="mr">मराठी</option><option value="bn">বাংলা</option><option value="gu">ગુજરાતી</option><option value="pa">ਪੰਜਾਬੀ</option><option value="or">ଓଡ଼ିଆ</option><option value="hinglish">Hinglish</option></select></label>
-        <label class="lang"><span>Mode</span><select id="mode"><option value="online">Online AI</option><option value="offline">Offline local</option></select></label>
+        <label class="lang"><span>Mode</span><select id="mode"><option value="online">Online AI</option><option value="offline">Deterministic NQR</option></select></label>
         <label class="voice-toggle" title="Read assistant replies aloud"><input id="speakToggle" type="checkbox" checked /> <span>🔊 Speak</span></label>
         <button id="installAppBtn" class="install-app-btn hidden" title="Install as Mobile/Desktop App">📲 Install App</button>
         <div id="statusPill" class="status checking"><span class="dot"></span><span id="statusText">Checking</span></div>
@@ -52,7 +52,7 @@
           <button id="micBtn" class="mic-btn" type="button" aria-label="Start voice input" title="Speak your answer">🎙️</button>
           <button id="sendBtn" type="submit">Send <span>→</span></button>
         </form>
-        <div class="composer-note"><span id="voiceStatus">Voice ready.</span> <span id="voiceModeText">Voice input uses your browser speech-recognition service when available.</span> Recommendations come from the local NQR engine.</div>
+        <div class="composer-note"><span id="voiceStatus">Voice ready.</span> <span id="voiceModeText">Voice input uses your browser speech-recognition service when available.</span> Recommendations are mapped against the NQR engine.</div>
       </section>
 
       <aside class="profile-card">
@@ -87,6 +87,6 @@
       </form>
     </dialog>
   </div>
-  <script src="/ui/app.js?v=46"></script>
+  <script src="/ui/app.js?v=47"></script>
 </body>
 </html>

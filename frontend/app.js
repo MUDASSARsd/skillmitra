@@ -3,6 +3,45 @@ let profile = null;
 let busy = false;
 let lastMissingCritical = ['education','livelihood_signal','experience','employment_preference','location','training_willingness'];
 
+// ---- Runtime awareness: cloud PWA vs real local/offline backend ----
+const SKILLMITRA_HOST = String(window.location.hostname || '').toLowerCase();
+const SKILLMITRA_LOOPBACK = SKILLMITRA_HOST === 'localhost' || SKILLMITRA_HOST === '127.0.0.1' || SKILLMITRA_HOST === '::1';
+const SKILLMITRA_PRIVATE_LAN =
+  /^10\./.test(SKILLMITRA_HOST) ||
+  /^192\.168\./.test(SKILLMITRA_HOST) ||
+  /^172\.(1[6-9]|2\d|3[01])\./.test(SKILLMITRA_HOST);
+const SKILLMITRA_LOCAL_RUNTIME = SKILLMITRA_LOOPBACK || SKILLMITRA_PRIVATE_LAN;
+const SKILLMITRA_CLOUD_RUNTIME = !SKILLMITRA_LOCAL_RUNTIME;
+let skillMitraBackendReachable = false;
+
+function skillMitraNetworkMessage(err){
+  const raw = String(err?.message || err || 'Request failed');
+  if(SKILLMITRA_CLOUD_RUNTIME && !navigator.onLine){
+    return 'This installed Render app is only the cached interface. The Python/NQR backend is not stored on the phone. For zero-internet phone use, run START_PHONE_OFFLINE_DEMO.bat on the laptop and open the local phone URL it shows.';
+  }
+  if(!skillMitraBackendReachable){
+    return SKILLMITRA_LOCAL_RUNTIME
+      ? 'The local SkillMitra backend is not reachable. Start LAUNCH_APP.bat or START_PHONE_OFFLINE_DEMO.bat, then try again.'
+      : 'The SkillMitra cloud backend is not reachable right now. Check internet/server connectivity and try again.';
+  }
+  return raw === 'Failed to fetch' ? 'The backend connection was interrupted. Please try again.' : raw;
+}
+
+function configureSkillMitraRuntimeUI(){
+  const mode = $('mode');
+  const offlineOption = mode?.querySelector('option[value="offline"]');
+  if(offlineOption){
+    offlineOption.textContent = SKILLMITRA_LOCAL_RUNTIME
+      ? 'Offline local'
+      : 'Server-local (internet required)';
+  }
+  const install = $('installAppBtn');
+  if(install && SKILLMITRA_CLOUD_RUNTIME){
+    install.title = 'Install the cloud app. Internet is still required for backend requests.';
+  }
+}
+
+
 
 
 // ---- Fast multilingual local STT; optional Parakeet / AI4Bharat fallbacks ----
@@ -234,9 +273,11 @@ function languageLabel(){ return LANGUAGE_LABELS[selectedLanguage()] || selected
 function updateVoiceModeText(){
   if(!$('voiceModeText')) return;
   if($('mode')?.value==='offline'){
-    $('voiceModeText').textContent='Offline local NLU + local ASR routing is active. Voice audio stays on this device.';
+    $('voiceModeText').textContent=SKILLMITRA_LOCAL_RUNTIME
+      ? 'Offline local NLU + local ASR routing is active. No cloud request is required.'
+      : 'Server-local extraction avoids Gemini, but this Render app still needs internet to reach its backend.';
   }else{
-    $('voiceModeText').textContent=`Online ${languageLabel()} microphone uses low-latency cloud transcription. Local ASR is not used in Online mode.`;
+    $('voiceModeText').textContent=`Online ${languageLabel()} microphone uses the online backend.`;
   }
 }
 // Never silently fall back to an unrelated installed voice.
@@ -707,8 +748,24 @@ function renderRecommendations(recs=[]){
   $('results').innerHTML=recs.map((r,i)=>{const q=r.qualification||{};const status=String(r.eligibility_status||'UNKNOWN');const reasons=(r.reasons||[]).slice(0,3);const warnings=(r.warnings||[]).slice(0,2);const pct=Math.round((r.relevance_score||0)*100);return `<article class="rec"><div class="rec-top"><div><span class="eyebrow">MATCH ${i+1}</span><h3>${esc(q.title||'Qualification')}</h3><div class="meta">${esc(q.sector_name||'Sector not listed')} · NSQF ${esc(q.nsqf_level_numeric??q.level??'—')}</div></div><span class="elig ${eligibilityClass(status)}">${esc(status.replaceAll('_',' '))}</span></div><div class="scheme-badge">🏛️ PM-AJAY GIA Component | Subsidy & Stipend Supported</div>${q.proposed_occupation?`<p><strong>Occupation:</strong> ${esc(q.proposed_occupation)}</p>`:''}${reasons.length?`<ul>${reasons.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>`:''}${warnings.length?`<p><strong>Note:</strong> ${warnings.map(esc).join(' ')}</p>`:''}<div class="score" title="Retrieval/ranking heuristic, not a suitability percentage"><i style="width:${Math.max(4,pct)}%"></i></div></article>`;}).join('');
 }
 async function checkHealth(){
-  try{const r=await fetch('/health');const d=await r.json();$('statusPill').className='status online';$('statusText').textContent=`Local DB · ${d.qualification_count||0} NQR`;}
-  catch{$('statusPill').className='status offline';$('statusText').textContent='API unavailable';}
+  try{
+    const r=await fetch('/health',{cache:'no-store'});
+    if(!r.ok) throw new Error('Backend health check failed');
+    const d=await r.json();
+    skillMitraBackendReachable=true;
+    $('statusPill').className='status online';
+    $('statusText').textContent=SKILLMITRA_LOCAL_RUNTIME
+      ? `LOCAL BACKEND · ${d.qualification_count||0} NQR`
+      : `CLOUD BACKEND · ${d.qualification_count||0} NQR`;
+  }catch(err){
+    skillMitraBackendReachable=false;
+    $('statusPill').className='status offline';
+    $('statusText').textContent=SKILLMITRA_LOCAL_RUNTIME?'Local API unavailable':'Cloud API unavailable';
+    if($('demoHeadline')) $('demoHeadline').textContent='Backend disconnected · cached UI only';
+    for(const id of ['metricNqr','metricEligibility','metricJobs','metricCourses','metricCentres']){
+      if($(id)) $(id).textContent='—';
+    }
+  }
 }
 async function conversation(text){
   const payload={text,current_profile:profile,language_code:$('language').value,include_recommendations:true,top_k:5};
@@ -727,7 +784,9 @@ async function loadReadiness(){
     $('metricJobs').textContent=d.jobs_cache?.active_job_openings ?? d.jobs_cache?.job_openings ?? '—';
     $('metricCourses').textContent=d.courses_cache?.cached_courses ?? '—';
     $('metricCentres').textContent=d.training_cache?.verified_directory_centres ?? d.training_cache?.training_centres ?? '—';
-    $('demoHeadline').textContent=d.offline_core_ready ? 'Offline core ready · evidence layers loaded' : 'System partially ready';
+    $('demoHeadline').textContent = SKILLMITRA_LOCAL_RUNTIME
+      ? (d.offline_core_ready ? 'Offline core ready · evidence layers loaded' : 'Local system partially ready')
+      : 'Cloud service ready · NQR evidence loaded';
   }catch{}
 }
 function money(v){if(v===null||v===undefined||Number.isNaN(Number(v)))return '—';return `₹${Math.round(Number(v)).toLocaleString('en-IN')}`;}
@@ -800,7 +859,7 @@ document.querySelectorAll('.preset-btn').forEach(btn => {
     }
   });
 });
-$('chatForm').addEventListener('submit',async e=>{e.preventDefault();await unlockAudioOutput();if(busy)return;const input=$('messageInput');const text=input.value.trim();if(!text)return;addMessage(text,'user');input.value='';showNotice('');setBusy(true);try{const d=await conversation(text);profile=d.profile;renderProfile();renderMissing(d.missing_critical,d.missing_enrichment);if(d.timings_ms?.total!=null){$('voiceStatus').textContent=`Processed in ${(d.timings_ms.total/1000).toFixed(1)}s · ${d.extraction_mode||'NLU'}`;}$('readiness').textContent=d.ready_for_mapping?'Ready to map':'Collecting';$('readiness').className=`badge ${d.ready_for_mapping?'ready':'muted'}`;if(d.next_question){addMessage(d.next_question);await speak(d.next_question);}else if(d.recommendations?.length){const msg=selectedText().ready;addMessage(msg);await speak(msg);}else if(d.ready_for_mapping){const msg=selectedText().noMatch;addMessage(msg);await speak(msg);}renderRecommendations(d.recommendations||[]);if(d.ready_for_mapping && d.recommendations?.length){await enrichProfile(profile);}}catch(err){showNotice(`${err.message}. You can still use the structured offline recommendation demo below.`);}finally{setBusy(false);}});
+$('chatForm').addEventListener('submit',async e=>{e.preventDefault();await unlockAudioOutput();if(busy)return;const input=$('messageInput');const text=input.value.trim();if(!text)return;addMessage(text,'user');input.value='';showNotice('');setBusy(true);try{const d=await conversation(text);profile=d.profile;renderProfile();renderMissing(d.missing_critical,d.missing_enrichment);if(d.timings_ms?.total!=null){$('voiceStatus').textContent=`Processed in ${(d.timings_ms.total/1000).toFixed(1)}s · ${d.extraction_mode||'NLU'}`;}$('readiness').textContent=d.ready_for_mapping?'Ready to map':'Collecting';$('readiness').className=`badge ${d.ready_for_mapping?'ready':'muted'}`;if(d.next_question){addMessage(d.next_question);await speak(d.next_question);}else if(d.recommendations?.length){const msg=selectedText().ready;addMessage(msg);await speak(msg);}else if(d.ready_for_mapping){const msg=selectedText().noMatch;addMessage(msg);await speak(msg);}renderRecommendations(d.recommendations||[]);if(d.ready_for_mapping && d.recommendations?.length){await enrichProfile(profile);}}catch(err){showNotice(skillMitraNetworkMessage(err));}finally{setBusy(false);}});
 $('resetBtn').addEventListener('click',async()=>{await resetVoiceCapture();profile=null;resetGreeting();renderProfile();renderMissing(['education','livelihood signal','experience','employment preference','location','training willingness'],[]);renderRecommendations([]);$('evidenceSummary').classList.add('hidden');$('readiness').textContent='Collecting';$('readiness').className='badge muted';showNotice('');});
 $('offlineDemoBtn').addEventListener('click',()=>$('offlineDialog').showModal());
 $('offlineForm').addEventListener('submit',async e=>{e.preventDefault();const skills=$('offSkills').value.split(',').map(x=>x.trim()).filter(Boolean), interests=$('offInterests').value.split(',').map(x=>x.trim()).filter(Boolean);const months=$('offExpMonths').value;const p=emptyProfile();p.education={level:$('offEducation').value||null,status:$('offStatus').value||null,stream:null};p.skills=skills;p.interests=interests;p.experience=($('offExpDomain').value||months)?[{domain:$('offExpDomain').value||null,duration_months:months===''?null:Number(months)}]:[];p.employment_preference=$('offEmployment').value||null;p.location.district=$('offDistrict').value||null;try{const r=await fetch('/recommend',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({profile:p,top_k:5,candidate_limit:30})});const d=await r.json();if(!r.ok)throw new Error(d.detail||'Recommendation failed');profile=p;renderProfile();renderRecommendations(d.recommendations||[]);await enrichProfile(profile);$('readiness').textContent='Offline mapped';$('readiness').className='badge ready';$('offlineDialog').close();addMessage('Structured offline profile mapped using the local NQR recommendation engine. No cloud LLM was required.');showNotice('');}catch(err){showNotice(err.message);$('offlineDialog').close();}});
@@ -808,7 +867,11 @@ $('mode').addEventListener('change',async()=>{
   await resetVoiceCapture();
   const offline=$('mode').value==='offline';
   updateVoiceModeText();
-  showNotice(offline?'Offline local extraction selected: no Gemini/LLM calls will be made.':'');
+  showNotice(offline
+    ? (SKILLMITRA_LOCAL_RUNTIME
+        ? 'Offline local mode: requests stay on this laptop backend.'
+        : 'Server-local mode selected. It avoids Gemini, but the installed Render app still requires internet. For true offline phone use, launch the laptop local server.')
+    : '');
   await refreshOfflineSTT();
   setTimeout(reportTTSAvailability,150);
 });
@@ -820,7 +883,7 @@ $('language').addEventListener('change',async()=>{
   await refreshOfflineSTT();
   setTimeout(reportTTSAvailability,150);
 });
-renderProfile();checkHealth();loadReadiness();updateVoiceModeText();refreshOfflineSTT();initVoice();setTimeout(reportTTSAvailability,250);
+configureSkillMitraRuntimeUI();configureSkillMitraRuntimeUI();configureSkillMitraRuntimeUI();configureRuntimeLabels();renderProfile();checkHealth();loadReadiness();updateVoiceModeText();refreshOfflineSTT();initVoice();setTimeout(reportTTSAvailability,250);
 
 // PWA Install prompt handler & Service Worker registration
 let deferredPrompt = null;
@@ -845,7 +908,9 @@ window.addEventListener('beforeinstallprompt', (e) => {
 window.addEventListener('appinstalled', () => {
   const btn = $('installAppBtn');
   if (btn) btn.classList.add('hidden');
-  showNotice('SkillMitra app installed successfully! You can launch it from your home screen or desktop.');
+  showNotice(SKILLMITRA_CLOUD_RUNTIME
+    ? 'SkillMitra cloud app installed. Internet is still required to reach the Render backend. For zero-internet phone use, launch the laptop local server.'
+    : 'SkillMitra local app installed. Keep the laptop backend running while using it.');
 });
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
